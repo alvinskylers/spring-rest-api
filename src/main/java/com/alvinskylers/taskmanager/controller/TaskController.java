@@ -19,12 +19,22 @@ public class TaskController {
         return tasks;
     }
 
+    @GetMapping("/{id}")
+    public Task getTaskById(@PathVariable Long id) {
+        return tasks.stream()
+                .filter(task -> task.getId().equals(id))
+                .findFirst()
+                .orElse(null);
+    }
+
     @PostMapping
-    public void createTask(@RequestBody Task task) {
+    public Task createTask(@RequestBody Task task) {
         task.setId(taskId++);
         task.setCompleted(false);
         task.setCreatedAt(LocalDateTime.now());
         tasks.add(task);
+
+        return task;
     }
 
 
