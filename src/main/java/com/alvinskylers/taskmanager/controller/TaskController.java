@@ -51,6 +51,20 @@ public class TaskController {
         return null;
     }
 
+    @DeleteMapping("/{id}")
+    public void deleteTask(@PathVariable Long id) {
+        tasks.removeIf(task -> task.getId().equals(id));
+    }
 
 
+
+    /*
+
+        HTTP STATUS CODES
+        200 OK ~ Successful GET, PUT, DELETE request
+        201 Created ~ Successful POST request (should return this)
+        404 Not Found ~ Resource doesn't exist
+        400 Bad Request ~ Invalid data
+
+     */
 }
