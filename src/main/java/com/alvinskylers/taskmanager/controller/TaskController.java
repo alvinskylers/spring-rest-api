@@ -37,5 +37,20 @@ public class TaskController {
         return task;
     }
 
+    @PutMapping("/{id}")
+    public Task updateTask(@PathVariable Long id, @RequestBody Task updatedTask) {
+        for (int i = 0;i < tasks.size(); i++ ) {
+            Task task = tasks.get(i);
+            if (task.getId().equals(id)) {
+                updatedTask.setId(id);
+                updatedTask.setCreatedAt(task.getCreatedAt());
+                tasks.set(i, updatedTask);
+                return updatedTask;
+            }
+        }
+        return null;
+    }
+
+
 
 }
