@@ -62,6 +62,15 @@ public class TaskController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/completed/{status}")
+    public List<Task> getTasksByCompletions(@PathVariable boolean status) {
+        return taskRepository.findByCompleted(status);
+    }
+
+    @GetMapping
+    public List<Task> getTasksByTitle(@RequestParam String title) {
+        return taskRepository.findByTitleContaining(title);
+    }
 
 
     /*
