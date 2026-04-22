@@ -1,7 +1,7 @@
 package com.alvinskylers.taskmanager.controller;
 
 import com.alvinskylers.taskmanager.entity.Task;
-import com.alvinskylers.taskmanager.repository.TaskRepository;
+import com.alvinskylers.taskmanager.service.TaskService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,64 +12,55 @@ import java.util.List;
 @RequestMapping("/api/v1/tasks") // Base URL for all endpoints in this controller
 public class TaskController {
 
-    private final TaskRepository taskRepository;
+    private final TaskService taskService;
 
     // Constructor Injection
     // @Autowired
-    public TaskController(TaskRepository taskRepository) {
-        this.taskRepository = taskRepository;
+    public TaskController(TaskService taskService) {
+        this.taskService = taskService;
     }
 
     @GetMapping
     public List<Task> getAllTasks() {
-        return taskRepository.findAll();
+        return taskService.getAllTasks();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Task> getTaskById(@PathVariable Long id) {
-        return taskRepository.findById(id)
+        return taskService.getTaskById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
     public ResponseEntity<Task> createTask(@RequestBody Task task) {
-       Task savedTask = taskRepository.save(task);
+       Task savedTask = taskService.createTask(task);
        return ResponseEntity.status(HttpStatus.CREATED).body(savedTask);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Task> updateTask(@PathVariable Long id,
                                            @RequestBody Task updatedTask) {
-        return taskRepository.findById(id)
-                .map(task -> {
-                    task.setTitle(updatedTask.getTitle());
-                    task.setDescription(updatedTask.getDescription());
-                    task.setCompleted(updatedTask.getCompleted());
-                    Task savedTask= taskRepository.save(task);
-                    return ResponseEntity.ok(savedTask);
-                })
+        return taskService.updateTask(id, updatedTask)
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
-        return taskRepository.findById(id)
-                .map( task -> {
-                    taskRepository.delete(task);
-                    return ResponseEntity.ok().<Void>build();
-                })
-                .orElse(ResponseEntity.notFound().build());
+        return taskService.deleteTask(id) ?
+                ResponseEntity.noContent().build() :
+                ResponseEntity.notFound().build();
     }
 
     @GetMapping("/completed/{status}")
     public List<Task> getTasksByCompletions(@PathVariable boolean status) {
-        return taskRepository.findByCompleted(status);
+        return taskService.getCompletedTasks(status);
     }
 
-    @GetMapping
+    @GetMapping("/search")
     public List<Task> getTasksByTitle(@RequestParam String title) {
-        return taskRepository.findByTitleContaining(title);
+        return taskService.searchTaskByTitle(title);
     }
 
 
