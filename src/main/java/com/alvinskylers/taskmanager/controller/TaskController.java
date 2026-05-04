@@ -23,12 +23,12 @@ public class TaskController {
     }
 
     @GetMapping
-    public List<Task> getAllTasks() {
+    public List<TaskResponse> getAllTasks() {
         return taskService.getAllTasks();
     }
 
     @GetMapping("/{id}")
-    public Task getTaskById(@PathVariable Long id) {
+    public TaskResponse getTaskById(@PathVariable Long id) {
         return taskService.getTaskById(id);
     }
 
@@ -51,13 +51,13 @@ public class TaskController {
     }
 
     @GetMapping("/completed/{status}")
-    public List<Task> getTasksByCompletions(@PathVariable boolean status) {
+    public List<TaskResponse> getTasksByCompletions(@PathVariable boolean status) {
         return taskService.getCompletedTasks(status);
     }
 
     @GetMapping("/search")
-    public List<Task> getTasksByTitle(@RequestParam String title) {
-        return taskService.searchTaskByTitle(title);
+    public List<TaskResponse> getTasksByTitle(@RequestParam String title) {
+        return  taskService.searchTaskByTitle(title);
     }
 
 

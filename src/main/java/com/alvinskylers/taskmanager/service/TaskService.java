@@ -23,13 +23,17 @@ public class TaskService {
         this.taskMapper = taskMapper;
     }
 
-    public List<Task> getAllTasks() {
-        return taskRepository.findAll();
+    public List<TaskResponse> getAllTasks() {
+        List<Task> tasksRetrieved = taskRepository.findAll();
+        return tasksRetrieved.stream()
+                .map(taskMapper::toResponse)
+                .toList();
     }
 
-    public Task getTaskById(Long id) {
-        return taskRepository.findById(id)
+    public TaskResponse getTaskById(Long id) {
+        Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new TaskNotFoundException(id));
+        return taskMapper.toResponse(task);
     }
 
     public TaskResponse createTask(TaskRequest task) {
@@ -51,11 +55,17 @@ public class TaskService {
             taskRepository.delete(task);
     }
 
-    public List<Task> getCompletedTasks(boolean status) {
-        return taskRepository.findByCompleted(status);
+    public List<TaskResponse> getCompletedTasks(boolean status) {
+        List<Task> tasksRetrieved = taskRepository.findByCompleted(status);
+        return tasksRetrieved.stream()
+                .map(taskMapper::toResponse)
+                .toList();
     }
 
-    public List<Task> searchTaskByTitle(String query) {
-        return taskRepository.findByTitleContaining(query);
+    public List<TaskResponse> searchTaskByTitle(String query) {
+        List<Task> tasksRetrieved = taskRepository.findByTitleContaining(query);
+        return tasksRetrieved.stream()
+                .map(taskMapper::toResponse)
+                .toList();
     }
 }
