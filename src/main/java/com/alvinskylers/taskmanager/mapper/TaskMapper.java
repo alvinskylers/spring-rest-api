@@ -3,7 +3,9 @@ package com.alvinskylers.taskmanager.mapper;
 import com.alvinskylers.taskmanager.entity.Task;
 import com.alvinskylers.taskmanager.dto.TaskRequest;
 import com.alvinskylers.taskmanager.dto.TaskResponse;
+import org.springframework.stereotype.Component;
 
+@Component
 public class TaskMapper {
 
     public Task toEntity(TaskRequest request) {
@@ -21,5 +23,11 @@ public class TaskMapper {
                 .completed(task.getCompleted())
                 .createdAt(task.getCreatedAt())
                 .build();
+    }
+
+    public void updateEntityFromRequest(Task task, TaskRequest taskRequest) {
+        task.setTitle(taskRequest.title());
+        task.setDescription(taskRequest.description());
+        task.setCompleted(taskRequest.completed());
     }
 }
