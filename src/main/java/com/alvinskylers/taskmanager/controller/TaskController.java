@@ -1,5 +1,6 @@
 package com.alvinskylers.taskmanager.controller;
 
+import com.alvinskylers.taskmanager.dto.TaskRequest;
 import com.alvinskylers.taskmanager.entity.Task;
 import com.alvinskylers.taskmanager.service.TaskService;
 import org.springframework.http.HttpStatus;
@@ -31,7 +32,7 @@ public class TaskController {
     }
 
     @PostMapping
-    public ResponseEntity<Task> createTask(@RequestBody Task task) {
+    public ResponseEntity<Task> createTask(@RequestBody TaskRequest task) {
        Task savedTask = taskService.createTask(task);
        return ResponseEntity.status(HttpStatus.CREATED).body(savedTask);
     }
