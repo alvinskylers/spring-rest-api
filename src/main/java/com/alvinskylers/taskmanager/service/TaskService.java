@@ -1,7 +1,10 @@
 package com.alvinskylers.taskmanager.service;
 
+import com.alvinskylers.taskmanager.dto.TaskRequest;
+import com.alvinskylers.taskmanager.dto.TaskResponse;
 import com.alvinskylers.taskmanager.entity.Task;
 import com.alvinskylers.taskmanager.exception.TaskNotFoundException;
+import com.alvinskylers.taskmanager.mapper.TaskMapper;
 import com.alvinskylers.taskmanager.repository.TaskRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -14,9 +17,11 @@ import java.util.Optional;
 public class TaskService {
 
     private final TaskRepository taskRepository;
+    private final TaskMapper taskMapper;
 
-    public TaskService(TaskRepository taskRepository) {
+    public TaskService(TaskRepository taskRepository, TaskMapper taskMapper) {
         this.taskRepository = taskRepository;
+        this.taskMapper = taskMapper;
     }
 
     public List<Task> getAllTasks() {
@@ -28,8 +33,10 @@ public class TaskService {
                 .orElseThrow(() -> new TaskNotFoundException(id));
     }
 
-    public Task createTask(Task task) {
-        return taskRepository.save(task);
+    public TaskResponse createTask(TaskRequest task) {
+        Task entityTask = taskMapper.toEntity(task);
+        Task savedTask = taskRepository.save(entityTask);
+        return taskMapper.toResponse(savedTask);
     }
 
     public Task updateTask(Long id, Task updatedTask) {
