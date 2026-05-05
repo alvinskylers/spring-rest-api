@@ -7,6 +7,8 @@ import com.alvinskylers.taskmanager.exception.TaskNotFoundException;
 import com.alvinskylers.taskmanager.mapper.TaskMapper;
 import com.alvinskylers.taskmanager.repository.TaskRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -67,5 +69,14 @@ public class TaskService {
         return tasksRetrieved.stream()
                 .map(taskMapper::toResponse)
                 .toList();
+    }
+
+    public Page<TaskResponse> getCompletedTasks(boolean status, Pageable pageable) {
+        Page<Task> tasksRetrieved = taskRepository.findByCompleted(status, pageable);
+        return tasksRetrieved.map(taskMapper::toResponse);
+    }
+
+    public Page<Task> getAllTasks(Pageable pageable) {
+        return taskRepository.findAll(pageable);
     }
 }

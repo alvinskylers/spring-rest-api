@@ -4,11 +4,18 @@ import com.alvinskylers.taskmanager.dto.TaskRequest;
 import com.alvinskylers.taskmanager.dto.TaskResponse;
 import com.alvinskylers.taskmanager.entity.Task;
 import com.alvinskylers.taskmanager.service.TaskService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @RestController // @Controller and @ResponseBody
 @RequestMapping("/api/v1/tasks") // Base URL for all endpoints in this controller
@@ -22,10 +29,10 @@ public class TaskController {
         this.taskService = taskService;
     }
 
-    @GetMapping
-    public List<TaskResponse> getAllTasks() {
-        return taskService.getAllTasks();
-    }
+//    @GetMapping
+//    public List<TaskResponse> getAllTasks() {
+//        return taskService.getAllTasks();
+//    }
 
     @GetMapping("/{id}")
     public TaskResponse getTaskById(@PathVariable Long id) {
@@ -70,4 +77,39 @@ public class TaskController {
         400 Bad Request ~ Invalid data
 
      */
+
+    //Pagination implementation
+    @GetMapping
+    public ResponseEntity<Map<String, Object>> getAllTasks(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "DESC") String sortDir ) {
+        Sort sort = sortDir.equalsIgnoreCase("ASC") ?
+                Sort.by(sortBy).ascending():
+                Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<Task> taskPage = taskService.getAllTasks(pageable);
+
+        List<TaskResponse> tasks = taskPage.getContent()
+                .stream()
+                .map(task -> new TaskResponse(
+                        task.getId(),
+                        task.getTitle(),
+                        task.getDescription(),
+                        task.getCompleted(),
+                        task.getCreatedAt()
+                )).toList();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("tasks", tasks);
+        response.put("currentPage", taskPage.getNumber());
+        response.put("totalItems", taskPage.getTotalElements());
+        response.put("totalPages", taskPage.getTotalPages());
+        response.put("hasNext", taskPage.hasNext());
+        response.put("hasPrevious", taskPage.hasPrevious());
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }
