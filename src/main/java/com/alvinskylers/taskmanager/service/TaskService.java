@@ -79,4 +79,16 @@ public class TaskService {
     public Page<Task> getAllTasks(Pageable pageable) {
         return taskRepository.findAll(pageable);
     }
+
+    public Page<Task> searchTaskByTitle(String title, Pageable pageable) {
+        return taskRepository.findByTitleContaining(title, pageable);
+    }
+
+    public Page<Task> searchTaskByCompletion(Boolean completion, Pageable pageable) {
+        return taskRepository.findTasksByCompletionStatus(completion, pageable);
+    }
+
+    public Page<Task> getTaskByTitleAndCompletion(String title, Boolean completed, Pageable pageable) {
+        return taskRepository.findByTitleContainingAndCompleted(title, completed, pageable);
+    }
 }
