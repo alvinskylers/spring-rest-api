@@ -1,8 +1,6 @@
 spring:
   application:
     name: task-manager
-  profiles:
-    active: dev
 
   # Datasource Configuration
   datasource:
@@ -24,9 +22,3 @@ spring:
     console:
       enabled: true
       path: /h2-console
-
-# App Information
-app:
-  name: Task Manager
-  version: 1.0.0
-  max-task-per-page: 20
