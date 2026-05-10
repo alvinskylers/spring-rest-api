@@ -30,3 +30,24 @@ app:
   name: Task Manager
   version: 1.0.0
   max-task-per-page: 20
+
+# Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,env,logger,beans,mappings
+      base-path: /actuator
+
+    health:
+      show-details: always
+
+    info:
+      env:
+        enabled: true
+
+  info:
+    app:
+      description: a simple task management application built with spring boot
+      version: 1.0.0
+      author: alvinskylers
